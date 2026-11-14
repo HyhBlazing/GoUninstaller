@@ -1,40 +1,45 @@
 # Go Uninstaller
 
-Windows x64 桌面卸载工具，当前为 0.5 版。免安装，直接运行。界面使用 go-webview2 和内嵌 HTML/CSS/JavaScript，运行前需要系统已安装 [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)（Windows 11 和较新的 Windows 10 通常已自带）。没有 .NET、PowerShell、Node、Python、Electron 或 BCU 运行依赖。相比原生界面，WebView2 会占用额外运行内存。
+公开测试版。Windows x64 免安装卸载工具，可以实际使用；真实软件的卸载兼容性尚未充分验证，不作为正式稳定版。采用 [MIT 许可证](LICENSE)。
 
-可执行文件未做代码签名，首次运行时 Windows SmartScreen 可能拦截，需要选择仍要运行。
-
-## 下载
-
-发布包：[Releases](https://github.com/HyhBlazing/GoUninstaller/releases) 中的 `GoUninstaller-0.5.0-windows-amd64.zip`，解压后运行 `GoUninstaller.exe`。
-
-也可以自行编译，见文末。
+[下载 0.5.0](https://github.com/HyhBlazing/GoUninstaller/releases/tag/v0.5.0) · [反馈问题](https://github.com/HyhBlazing/GoUninstaller/issues)
 
 ## 界面
 
-桌面软件、商店应用、忽略三个列表。搜索支持中文、拼音和首字母。
+<table>
+<tr>
+<td width="50%"><img src="功能截图/桌面软件.png" alt="桌面软件列表"></td>
+<td width="50%"><img src="功能截图/商店应用.png" alt="商店应用与保护分级"></td>
+</tr>
+<tr>
+<td>桌面软件。搜索支持中文、拼音和首字母。</td>
+<td>商店应用按保护级别标注。标为“不可卸载”的系统组件不能卸载。</td>
+</tr>
+<tr>
+<td><img src="功能截图/忽略.png" alt="忽略列表"></td>
+<td><img src="功能截图/右键操作.png" alt="右键菜单"></td>
+</tr>
+<tr>
+<td>不关心的程序可以移动到忽略列表。</td>
+<td>右键可以卸载、用谷歌或百度搜索、导出当前项，并刷新列表。</td>
+</tr>
+<tr>
+<td><img src="功能截图/批量卸载.png" alt="批量卸载与导出"></td>
+<td><img src="功能截图/操作日志.png" alt="操作日志"></td>
+</tr>
+<tr>
+<td>多选后可以批量卸载，或导出已选程序的清单。</td>
+<td>每次卸载、清理和导出都会写入本机操作日志，包含是否通过 UAC。</td>
+</tr>
+</table>
 
-![桌面软件列表](功能截图/桌面软件.png)
+## 下载
 
-商店应用按保护级别标注。标为“不可卸载”的系统组件不能卸载。
+发布包在 [Releases](https://github.com/HyhBlazing/GoUninstaller/releases)。当前为 [0.5.0](https://github.com/HyhBlazing/GoUninstaller/releases/tag/v0.5.0) 的 `GoUninstaller-0.5.0-windows-amd64.zip`，解压后运行 `GoUninstaller.exe`。0.5.0 是接入自动构建之前手工上传的。之后推送 `v*` 标签时，GitHub Actions 会在 Windows 上执行 `build.ps1`，并把打好的 zip 附到对应 Release。
 
-![商店应用与保护分级](功能截图/商店应用.png)
+界面使用 go-webview2 和内嵌 HTML/CSS/JavaScript，运行前需要系统已安装 [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)（Windows 11 和较新的 Windows 10 通常已自带）。没有 .NET、PowerShell、Node、Python、Electron 或 BCU 运行依赖。相比原生界面，WebView2 会占用额外运行内存。
 
-右键可以把不关心的程序移动到忽略列表。
-
-![忽略列表](功能截图/忽略.png)
-
-右键可以卸载、按谷歌或百度搜索名称和发布者、导出当前项，并刷新列表。
-
-![右键菜单](功能截图/右键操作.png)
-
-多选后可以批量卸载，或导出已选程序的清单。
-
-![批量卸载与导出](功能截图/批量卸载.png)
-
-每次卸载、清理和导出都会写入本机操作日志，包含是否通过 UAC。
-
-![操作日志](功能截图/操作日志.png)
+可执行文件未做代码签名，首次运行时 Windows SmartScreen 可能拦截，需要选择仍要运行。使用中遇到的问题请提交到 [Issues](https://github.com/HyhBlazing/GoUninstaller/issues)。
 
 ## 使用
 
@@ -106,7 +111,8 @@ Windows x64 桌面卸载工具，当前为 0.5 版。免安装，直接运行。
 - 目录权限不足、重解析点/链接、共享目录会跳过或报告失败。备份与清理操作并非事务；目录内部仍可能有独立软件或个人数据，需人工核对。
 - 没有强制删除安装记录、便携版模式（设置与日志仍写入 `%LOCALAPPDATA%`）、主题、收藏、备注。
 - 验证范围：单元测试覆盖结果判定、卸载命令解析、静默方案生成、日志与导出；卸载等待、子进程跟踪和中止逻辑用系统自带的 `cmd.exe` 充当卸载程序做了实际进程测试；界面用 `--ui-smoke` 和模拟数据逐个检查了各对话框。作者在自己的电脑上做过少量真实卸载，各类安装器的兼容性还没有系统验证。
-- 作为正式产品发布前仍缺少：可执行文件代码签名（未签名会被 SmartScreen 拦截）、安装包与自动更新、授权与激活、崩溃上报。
+- 发布 v1.0 之前，需要在 Windows 10 和 Windows 11 的虚拟机里建立可重复的卸载测试集。优先覆盖四类情况：静默卸载是否真的静默、残留扫描是否误判、用户取消 UAC 后是否没有继续卸载、卸载程序通过服务或计划任务间接启动的子进程能否被正确等待。在这套测试完成前，版本保持公开测试版。
+- 仍未提供：可执行文件代码签名（未签名会被 SmartScreen 拦截）、安装包与自动更新、崩溃上报。
 
 ## 修改与编译
 
@@ -128,8 +134,17 @@ Windows x64 桌面卸载工具，当前为 0.5 版。免安装，直接运行。
 - `export_windows.go`：软件清单导出（CSV/JSON）与保存对话框。
 - `scan_windows.go`：残留匹配、路径保护与备份清理。
 
+推送到 `main` 或打开拉取请求时，GitHub Actions 会在 Windows 上执行 `build.ps1`。本地也可以直接运行它，步骤与自动构建相同：
+
+```powershell
+.\build.ps1
+```
+
+等价命令：
+
 ```powershell
 go test ./...
+go vet ./...
 go build -trimpath -ldflags "-H windowsgui -s -w" -o GoUninstaller.exe .
 ```
 

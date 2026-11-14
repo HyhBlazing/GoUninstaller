@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.20.14"
+          cache: true
+
+      - name: Test, vet, and build
+        shell: pwsh
+        run: .\build.ps1
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart("v")
+          if ($version -notmatch "^[0-9]+\.[0-9]+\.[0-9]+$") {
+            throw "Tag must look like v1.2.3"
+          }
+          Compress-Archive -Path .\GoUninstaller.exe -DestinationPath ".\GoUninstaller-$version-windows-amd64.zip"
+
+      - name: Publish the zip
+        uses: softprops/action-gh-release@v2
+        with:
+          files: GoUninstaller-*-windows-amd64.zip
+          fail_on_unmatched_files: true
+          generate_release_notes: true

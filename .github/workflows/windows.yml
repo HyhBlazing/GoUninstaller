@@ -1,0 +1,35 @@
+name: Windows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.20.14"
+          cache: true
+
+      - name: Test, vet, and build
+        shell: pwsh
+        run: .\build.ps1
+
+      - name: Upload executable
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: GoUninstaller-windows-amd64
+          path: GoUninstaller.exe
+          if-no-files-found: error
