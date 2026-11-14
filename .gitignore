@@ -1,0 +1,4 @@
+# 构建产物。发布用的可执行文件放在 GitHub Releases，不进入仓库。
+*.exe
+*.exe~
+*.test
