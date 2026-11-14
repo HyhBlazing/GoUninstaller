@@ -73,7 +73,11 @@ func (t *procTracker) refresh(rootAlive bool) int {
 			}
 			t.tracked[pid] = &trackedProc{name: p.name, alive: true}
 			t.parents[pid] = true
-			t.sawChild = true
+			// Console hosts and browsers are followed so their own children can
+			// still be found, but they are not the uninstaller's working process.
+			if !ignoredDescendants[p.name] {
+				t.sawChild = true
+			}
 			changed = true
 		}
 	}
